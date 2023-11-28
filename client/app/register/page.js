@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import axios from "axios";
 
 const page = () => {
   const [name, setName] = useState("");
@@ -10,9 +11,21 @@ const page = () => {
    * @description handleSubmit
    * @param {*} event
    */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.table({ name, email, password });
+    try {
+      const response = await axios.post(
+        `http//localhost:8000/api/v1/register`,
+        {
+          name,
+          email,
+          password,
+        }
+      );
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
   };
   return (
     <>
