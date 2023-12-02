@@ -13,18 +13,23 @@ const page = () => {
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      const response = await axios.post(
-        `http//localhost:8000/api/v1/register`,
-        {
-          name,
-          email,
-          password,
-        }
+      const response = await axios.post("http://localhost:8000/api/register", {
+        name,
+        email,
+        password,
+      });
+
+      console.log(response.data);
+    } catch (error) {
+      console.error(
+        "Error:",
+        console.error(
+          "Error:",
+          error.response ? error.response.data : error.message
+        )
       );
-      console.log(response);
-    } catch (err) {
-      console.log(err);
     }
   };
   return (
