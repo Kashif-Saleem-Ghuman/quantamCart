@@ -2,11 +2,30 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { SyncOutlined } from "@ant-design/icons";
 
 const page = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setpassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  /**
+   * @description show toast notification
+   * @param {*} message
+   * @param {*} type
+   * @returns toast
+   */
+  const notify = (message, type) => {
+    toast(message, {
+      type: type,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      autoClose: 1500,
+    });
+  };
+
   /**
    * @description handleSubmit
    * @param {*} event
@@ -15,6 +34,7 @@ const page = () => {
     e.preventDefault();
 
     try {
+      setLoading(true);
       const response = await axios.post("http://localhost:8000/api/register", {
         name,
         email,
@@ -22,7 +42,10 @@ const page = () => {
       });
 
       console.log(response.data);
+      notify("Registeration Successull, Please Login", "success");
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error(
         "Error:",
         console.error(
@@ -30,8 +53,10 @@ const page = () => {
           error.response ? error.response.data : error.message
         )
       );
+      notify(error.response.data, "error");
     }
   };
+
   return (
     <>
       <h1 className="text-center my-3">Register</h1>
@@ -63,10 +88,15 @@ const page = () => {
             placeholder="Enter password"
             required
           />
-
-          <button type="submit" className="btn btn-primary btn-block">
-            Submit
-          </button>
+          <div className="d-grid">
+            <button
+              type="submit"
+              className="btn btn-primary"
+              disabled={!name || !email || !password || loading}
+            >
+              {loading ? <SyncOutlined spin /> : "Submit"}
+            </button>
+          </div>
         </form>
       </div>
     </>
