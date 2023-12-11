@@ -1,15 +1,28 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { SyncOutlined } from "@ant-design/icons";
 import Link from "next/link";
+import { Context } from "../../context";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
+  // router
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setpassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // state
+  const {
+    state: { user },
+
+    dispatch,
+  } = useContext(Context);
+
+  console.log("State", user);
   /**
    * @description show toast notification
    * @param {*} message
@@ -35,14 +48,21 @@ const Login = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post(`/api/login`, {
+      const { data } = await axios.post(`/api/login`, {
         email,
         password,
       });
 
-      console.log(response.data);
+      // console.log(response.data);
+      dispatch({
+        type: "LOGIN",
+        payload: data,
+      });
+      // save in local storage
+      window.localStorage.setItem("user", JSON.stringify(data));
       notify("Login Successull");
       setLoading(false);
+      router.push("/");
     } catch (error) {
       setLoading(false);
       console.error(
